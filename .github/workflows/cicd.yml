@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
+# Keep the default token read-only. The image-publishing job receives
+# package write access only when it runs on a push to the default branch.
 permissions:
   contents: read
-  packages: write
 
 jobs:
-  # Job 1: Continuous Integration (CI) - Run automated tests
   test:
     name: Run Automated Tests
     runs-on: ubuntu-latest
@@ -29,12 +32,14 @@ jobs:
       - name: Execute test suite
         run: npm test
 
-  # Job 2: Continuous Deployment (CD) - Build & Push Docker image
-  # Gated by the test job to ensure only verified code is built and packaged
   build-and-push:
     name: Build and Push Docker Image
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
