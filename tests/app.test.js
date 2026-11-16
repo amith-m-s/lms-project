@@ -51,7 +51,14 @@ describe('LMS API Endpoints', () => {
     const response = await request(app).post('/enroll');
 
     expect(response.statusCode).toBe(400);
-    expect(response.body).toHaveProperty('error', 'Request body must be a JSON object');
+    expect(response.body).toHaveProperty('error', 'Request body must be a non-empty JSON object');
+  });
+
+  test('POST /enroll rejects an empty request object', async () => {
+    const response = await request(app).post('/enroll').send({});
+
+    expect(response.statusCode).toBe(400);
+    expect(response.body).toHaveProperty('error', 'Request body must be a non-empty JSON object');
   });
 
   test('POST /enroll rejects array request bodies', async () => {
@@ -60,7 +67,7 @@ describe('LMS API Endpoints', () => {
       .send([{ studentId: 'STU104', courseId: 1 }]);
 
     expect(response.statusCode).toBe(400);
-    expect(response.body).toHaveProperty('error', 'Request body must be a JSON object');
+    expect(response.body).toHaveProperty('error', 'Request body must be a non-empty JSON object');
   });
 
   test.each([
