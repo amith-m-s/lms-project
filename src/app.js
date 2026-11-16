@@ -24,8 +24,8 @@ app.get('/courses', (req, res) => {
 app.post('/enroll', (req, res) => {
   const body = req.body;
 
-  if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    return res.status(400).json({ error: 'Request body must be a JSON object' });
+  if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).length === 0) {
+    return res.status(400).json({ error: 'Request body must be a non-empty JSON object' });
   }
 
   const { studentId: rawStudentId, courseId: rawCourseId } = body;
